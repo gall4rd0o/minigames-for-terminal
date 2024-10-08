@@ -16,17 +16,28 @@ keys = {
 
 # Diccionario de colores básicos
 colors = {
-    "negro": "\033[30m",
-    "rojo": "\033[31m",
-    "verde": "\033[32m",
-    "amarillo": "\033[33m",
-    "azul": "\033[34m",
+    "black": "\033[30m",
+    "red": "\033[31m",
+    "green": "\033[32m",
+    "yellow": "\033[33m",
+    "blue": "\033[34m",
     "magenta": "\033[35m",
-    "cian": "\033[36m",
-    "blanco": "\033[37m",
+    "cyan": "\033[36m",
+    "white": "\033[37m",
     "reset": "\033[0m"  # Para resetear el color
 }
 
+background_colors = {
+    "black": "\033[40m",       
+    "red": "\033[41m",         
+    "green": "\033[42m",       
+    "yellow": "\033[43m",      
+    "blue": "\033[44m",        
+    "magenta": "\033[45m",     
+    "cyan": "\033[46m",        
+    "white": "\033[47m",
+    "reset": "\033[0m"
+}
 
 conf = {"width": 10, "height": 10, "bombs": 10}
 rd.seed(15)
@@ -305,10 +316,9 @@ class Board():
             string += left
             for x in range(0, self.width):
                 if (x,y) == self.current_cell:
-                    string += colors["azul"] 
-                string += str(self.board[y][x]) + " "
-                if (x,y) == self.current_cell:
-                    string += colors["reset"] 
+                    string += background_colors["blue"] + str(self.board[y][x]) + background_colors["reset"] + " "
+                else:
+                    string += str(self.board[y][x]) + " "
             right = "-" + " "*(1+len(str(self.height))-len(str(y+1))) + str(y+1)
             string += right + "\n"
 
