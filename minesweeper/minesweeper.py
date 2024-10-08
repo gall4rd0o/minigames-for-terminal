@@ -1,5 +1,6 @@
 import random as rd
 import keyboard as kb
+import os
 
 bc = "🞩" #bomb char
 sc = "▣" #square char
@@ -24,7 +25,8 @@ colors = {
     "magenta": "\033[35m",
     "cyan": "\033[36m",
     "white": "\033[37m",
-    "reset": "\033[0m"  # Para resetear el color
+    "reset": "\033[0m",  # Para resetear el color
+    "invert": "\033[7m"  # Para invertir el color
 }
 
 background_colors = {
@@ -36,10 +38,11 @@ background_colors = {
     "magenta": "\033[45m",     
     "cyan": "\033[46m",        
     "white": "\033[47m",
-    "reset": "\033[0m"
+    "reset": "\033[0m",
+    "invert": "\033[7m"
 }
 
-conf = {"width": 10, "height": 10, "bombs": 10}
+conf = {"width": 10, "height": 10, "bombs": 30}
 rd.seed(15)
 
 class Cell():
@@ -52,11 +55,28 @@ class Cell():
         if self.is_flagged:
             return fc
         if self.is_visible:
+            content = ""
             if self.content == 0:
-                return " "
-            if self.content == -1:
-                return bc
-            return str(self.content)
+                content = " "
+            elif self.content == -1:
+                content = bc
+            elif self.content == 1:
+                content = colors["blue"] + "1" + colors["reset"]
+            elif self.content == 2:
+                content = colors["green"] + "2" + colors["reset"]
+            elif self.content == 3:
+                content = colors["yellow"] + "3" + colors["reset"]
+            elif self.content == 4:
+                content = colors["red"] + "4" + colors["reset"]
+            elif self.content == 5:
+                content = colors["magenta"] + "5" + colors["reset"]
+            elif self.content == 6:
+                content = colors["cyan"] + "6" + colors["reset"]
+            elif self.content == 7:
+                content = colors["white"] + "7" + colors["reset"]
+            elif self.content == 8:
+                content = colors["black"] + "8" + colors["reset"]
+            return content
         return sc
 
 class Board():
@@ -90,7 +110,6 @@ class Board():
     def assign_content(self):
         self.assign_bombs()
         self.assign_numbers()
-        print(f"numeric cells: {self.numeric_cells}")
 
     # Asigna los bombas
     def assign_bombs(self) -> None:
@@ -189,7 +208,6 @@ class Board():
             self.win_game()
         
     def all_numeric_cells_are_visible(self) -> bool:
-        print(f"numeric_cells: {self.numeric_cells}")
         if self.numeric_cells == 0:
             return True
         return False
@@ -243,7 +261,6 @@ class Board():
                 if k == len(coords0):
                     break
                 i, j = coords0[k]
-        #print(f"coords0: {coords0}")
         return coords0
     
     # Quita la bandera de una celda
@@ -263,7 +280,6 @@ class Board():
     def set_current_cell(self, coord: tuple[int, int]) -> None:
         if self.validate_cell(coord):
             self.current_cell = coord
-            print(f"current_cell: {self.current_cell}")
 
     # Hace visible una celda
     def make_cell_visible(self, coord: tuple[int, int]) -> None:
@@ -312,11 +328,11 @@ class Board():
         string += up + "\n"
         
         for y in range(0, self.height):
-            left = str(y+1) + " "*(1+len(str(self.height))-len(str(y+1))) + "- "
+            left = str(y+1) + " "*(1+len(str(self.height))-len(str(y+1))) + "-"
             string += left
             for x in range(0, self.width):
                 if (x,y) == self.current_cell:
-                    string += background_colors["blue"] + str(self.board[y][x]) + background_colors["reset"] + " "
+                    string += background_colors["invert"] + str(self.board[y][x]) + background_colors["reset"] + " "
                 else:
                     string += str(self.board[y][x]) + " "
             right = "-" + " "*(1+len(str(self.height))-len(str(y+1))) + str(y+1)
@@ -351,6 +367,9 @@ class View():
     def lose(self) -> None:
         print("Perdiste! :P")
 
+    def clear_screen(self) -> None:
+        os.system('cls' if os.name == 'nt' else 'clear')
+
     def win(self) -> None:
         print("Ganaste! :D")
 
@@ -369,9 +388,9 @@ class Controller():
     def main(self) -> None:
         self.init_board()
         while not (self.board.lose or self.board.win):
+            self.view.clear_screen()
             self.view.print_board(self.board)
             input = kb.read_hotkey(False)
-            print(f"input: {input}")
             if input in keys["up"]:
                 self.board.current_cell = (self.board.current_cell[0], self.board.current_cell[1]-1)
             elif input in keys["down"]:
@@ -385,8 +404,10 @@ class Controller():
                     self.board.take_flag(self.board.current_cell)
                 else:
                     self.board.put_flag(self.board.current_cell)
-            elif input == "enter":
+            elif input == "space":
                 self.board.select_cell(self.board.current_cell)
+        self.view.clear_screen()
+        self.view.print_board(self.board)
         if self.board.lose:
             self.view.lose()
         if self.board.win:
