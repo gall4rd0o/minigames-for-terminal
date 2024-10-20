@@ -424,26 +424,27 @@ class Controller():
             print("Adiós!")
 
     def handle_input(self, input: str) -> None:
+        cx, cy = self.board.current_cell
         if input in keys["up"]:
-            if self.board.current_cell[1] == 0:
-                self.board.current_cell = (self.board.current_cell[0], self.board.height-1)
+            if cy == 0:
+                self.board.current_cell = (cx, self.board.height-1)
             else:
-                self.board.current_cell = (self.board.current_cell[0], self.board.current_cell[1]-1)
+                self.board.current_cell = (cx, cy-1)
         elif input in keys["down"]:
-            if self.board.current_cell[1] == self.board.height-1:
-                self.board.current_cell = (self.board.current_cell[0], 0)
+            if cy == self.board.height-1:
+                self.board.current_cell = (cx, 0)
             else:
-                self.board.current_cell = (self.board.current_cell[0], self.board.current_cell[1]+1)
+                self.board.current_cell = (cx, cy+1)
         elif input in keys["left"]:
-            if self.board.current_cell[0] == 0:
-                self.board.current_cell = (self.board.width-1, self.board.current_cell[1])
+            if cx == 0:
+                self.board.current_cell = (self.board.width-1, cy)
             else:
-                self.board.current_cell = (self.board.current_cell[0]-1, self.board.current_cell[1])
+                self.board.current_cell = (cx-1, cy)
         elif input in keys["right"]:
-            if self.board.current_cell[0] == self.board.width-1:
-                self.board.current_cell = (0, self.board.current_cell[1])
+            if cx == self.board.width-1:
+                self.board.current_cell = (0, cy)
             else:
-                self.board.current_cell = (self.board.current_cell[0]+1, self.board.current_cell[1])
+                self.board.current_cell = (cx+1, cy)
         elif input in keys["shift"]:
             if self.board.cell_has_flag(self.board.current_cell):
                 self.board.take_flag(self.board.current_cell)
@@ -451,76 +452,17 @@ class Controller():
                 self.board.put_flag(self.board.current_cell)
         elif input in keys["enter"]:
             self.board.select_cell(self.board.current_cell)
-    # def main1(self) -> None:
-    #     self.init_board()
-    #     while not self.board.lose and not self.board.win:
-    #         self.view.print_board(self.board, self.board.height, self.board.width)
-    #         user_input = self.view.input()
-    #         try:
-    #             flag, x, y = self.parse_input(user_input)
-    #         except:
-    #             self.view.error()
-    #             continue
-    #         if not self.validate_coord((x, y)):
-    #             self.view.error()
-    #             continue
-    #         if flag:
-    #             if self.board.cell_has_flag((x, y)):
-    #                 self.board.take_flag((x, y))
-    #             else:
-    #                 self.board.put_flag((x, y))
-    #         elif not flag:
-    #             self.board.select_cell((x, y))
-    #     self.view.print_board(self.board)
-    #     if self.board.win:
-    #         self.view.win()
-    #     elif self.board.lose:    
-    #         self.view.lose()
-    #     play_again = self.view.play_again()
-    #     if play_again == "s":
-    #         self.main()
-    #     else:
-    #         print("Adiós!")
 
     def validate_coord(self, coord: tuple[int, int]) -> bool:
         x, y = coord
-        if int(x) >= 0 and int(x) < self.board.width and int(y) >= 0 and int(y) < self.board.height:
+        if (x in range(0, self.board.width) and
+                y in range(0, self.board.height)):
             return True
         return False
 
-    # def parse_input(self, string) -> None:
-    #     l = string.split(" ")
-    #     flag = False
-    #     if len(l) == 2:
-    #         if l[0] == "f":
-    #             flag = True 
-    #         l.pop(0)
-    #     xstr, ystr = "", ""
-    #     for char in l[0]: 
-    #         if char.isalpha():
-    #             xstr += char
-    #         elif char.isdigit():
-    #             break
-    #     for char in l[0][len(xstr):]:
-    #         if char.isdigit():
-    #             ystr += char
-    #         elif char.isalpha():
-    #             break
-    #     xstr = ord(xstr[0])-97
-    #     ystr = int(ystr)-1
-    #     return flag, xstr, ystr
 
 a = Board(conf["width"], conf["height"], conf["bombs"])
 v = View()
 c = Controller(a, v)
 c.init_board()
 c.main()
-# a.select_cell(9,9)
-# #a.assign_content()
-# # # print(a.board[4][0])
-# print(a.where_there_is_something_in_perimeter("0", 9, 9))
-# print(a.where_there_is_something_in_perimeter("0", 8, 9))
-# print(a.where_there_is_something_in_perimeter("0", 7, 9))
-# print(a.find_group_of_zeros(9, 9))
-# print(a)
-# c.main()
