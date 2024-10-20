@@ -15,7 +15,7 @@ keys = {
     "enter": ["enter", "space"],
 }
 
-# Diccionario de colores básicos
+# Diccionario de colores básicos, ansi escape code
 colors = {
     "black": "\033[30m",
     "red": "\033[31m",
@@ -42,8 +42,8 @@ background_colors = {
     "invert": "\033[7m"
 }
 
-conf = {"width": 10, "height": 30, "bombs": 60}
-rd.seed(15)
+conf = {"width": 70, "height": 30, "bombs": 400}
+# rd.seed(15)
 
 
 def color_str(color, str):
@@ -366,7 +366,7 @@ class Board():
             down += chr(x) + " "
         string += down + "\n"
 
-        string += f"\n\tbombas restantes: {self.current_bombs}\n"
+        #string += f"\n\tbombas restantes: {self.current_bombs}\n"
         return string
 
 
@@ -380,7 +380,8 @@ class View():
         print("Error: selecciona una celda válida")
 
     def print_board(self, board: Board) -> None:
-        print(f"\033[1;1H{board}", end="", flush=True)
+        print(f"\033[1;1H{board}\n\tbombas restantes: {board.current_bombs}", end="", flush=True)
+        #print(f"bombas restantes: {board.current_bombs}", flush=True)
 
     def lose(self) -> None:
         print("Perdiste! :P")
