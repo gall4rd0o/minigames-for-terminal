@@ -1,6 +1,5 @@
 import random as rd
 import keyboard as kb
-import os
 
 bc = "🞩"  # bomb char
 sc = "▣"  # square char
@@ -43,7 +42,7 @@ background_colors = {
     "invert": "\033[7m"
 }
 
-conf = {"width": 10, "height": 10, "bombs": 15}
+conf = {"width": 10, "height": 30, "bombs": 60}
 rd.seed(15)
 
 
@@ -204,9 +203,12 @@ class Board():
         if self.first_cell == []:
             self.first_cell = coord
             self.assign_content()
+
         if not self.validate_cell(coord):
             return
+
         self.make_cell_visible(coord)
+
         if self.cell_has_zero(coord):
             coords0 = self.find_group_of_zeros(coord)
             for coord in coords0:
@@ -378,7 +380,7 @@ class View():
         print("Error: selecciona una celda válida")
 
     def print_board(self, board: Board) -> None:
-        print(f"\033[1;1H{board}", end="")
+        print(f"\033[1;1H{board}", end="", flush=True)
 
     def lose(self) -> None:
         print("Perdiste! :P")
