@@ -45,6 +45,8 @@ background_colors = {
 conf = {"width": 10, "height": 10, "bombs": 30}
 rd.seed(15)
 
+def color_str(color, str):
+    return color + str + colors["reset"]
 class Cell():
     def __init__(self) -> None:
         self.is_visible = False
@@ -61,21 +63,21 @@ class Cell():
             elif self.content == -1:
                 content = bc
             elif self.content == 1:
-                content = colors["blue"] + "1" + colors["reset"]
+                content = color_str(colors["blue"], "1")
             elif self.content == 2:
-                content = colors["green"] + "2" + colors["reset"]
+                content = color_str(colors["green"], "2")
             elif self.content == 3:
-                content = colors["yellow"] + "3" + colors["reset"]
+                content = color_str(colors["yellow"], "3")
             elif self.content == 4:
-                content = colors["red"] + "4" + colors["reset"]
+                content = color_str(colors["red"], "4")
             elif self.content == 5:
-                content = colors["magenta"] + "5" + colors["reset"]
+                content = color_str(colors["magenta"], "5")
             elif self.content == 6:
-                content = colors["cyan"] + "6" + colors["reset"]
+                content = color_str(colors["cyan"], "6")
             elif self.content == 7:
-                content = colors["white"] + "7" + colors["reset"]
+                content = color_str(colors["white"], "7")
             elif self.content == 8:
-                content = colors["black"] + "8" + colors["reset"]
+                content = color_str(colors["black"], "8")
             return content
         return sc
 
@@ -332,7 +334,7 @@ class Board():
             string += left
             for x in range(0, self.width):
                 if (x,y) == self.current_cell:
-                    string += background_colors["invert"] + str(self.board[y][x]) + background_colors["reset"] + " "
+                    string += color_str(background_colors["invert"], str(self.board[y][x])) + " "
                 else:
                     string += str(self.board[y][x]) + " "
             right = "-" + " "*(1+len(str(self.height))-len(str(y+1))) + str(y+1)
