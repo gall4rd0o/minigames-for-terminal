@@ -391,21 +391,7 @@ class Controller():
             self.view.clear_screen()
             self.view.print_board(self.board)
             input = kb.read_hotkey(False)
-            if input in keys["up"]:
-                self.board.current_cell = (self.board.current_cell[0], self.board.current_cell[1]-1)
-            elif input in keys["down"]:
-                self.board.current_cell = (self.board.current_cell[0], self.board.current_cell[1]+1)
-            elif input in keys["left"]:
-                self.board.current_cell = (self.board.current_cell[0]-1, self.board.current_cell[1])
-            elif input in keys["right"]:
-                self.board.current_cell = (self.board.current_cell[0]+1, self.board.current_cell[1])
-            elif input in keys["shift"]:
-                if self.board.cell_has_flag(self.board.current_cell):
-                    self.board.take_flag(self.board.current_cell)
-                else:
-                    self.board.put_flag(self.board.current_cell)
-            elif input == "space":
-                self.board.select_cell(self.board.current_cell)
+            self.handle_input(input)
         self.view.clear_screen()
         self.view.print_board(self.board)
         if self.board.lose:
@@ -418,7 +404,34 @@ class Controller():
         else:
             print("Adiós!")
 
-    
+    def handle_input(self, input: str) -> None:
+        if input in keys["up"]:
+            if self.board.current_cell[1] == 0:
+                self.board.current_cell = (self.board.current_cell[0], self.board.height-1)
+            else:
+                self.board.current_cell = (self.board.current_cell[0], self.board.current_cell[1]-1)
+        elif input in keys["down"]:
+            if self.board.current_cell[1] == self.board.height-1:
+                self.board.current_cell = (self.board.current_cell[0], 0)
+            else:
+                self.board.current_cell = (self.board.current_cell[0], self.board.current_cell[1]+1)
+        elif input in keys["left"]:
+            if self.board.current_cell[0] == 0:
+                self.board.current_cell = (self.board.width-1, self.board.current_cell[1])
+            else:
+                self.board.current_cell = (self.board.current_cell[0]-1, self.board.current_cell[1])
+        elif input in keys["right"]:
+            if self.board.current_cell[0] == self.board.width-1:
+                self.board.current_cell = (0, self.board.current_cell[1])
+            else:
+                self.board.current_cell = (self.board.current_cell[0]+1, self.board.current_cell[1])
+        elif input in keys["shift"]:
+            if self.board.cell_has_flag(self.board.current_cell):
+                self.board.take_flag(self.board.current_cell)
+            else:
+                self.board.put_flag(self.board.current_cell)
+        elif input in keys["enter"]:
+            self.board.select_cell(self.board.current_cell)
     # def main1(self) -> None:
     #     self.init_board()
     #     while not self.board.lose and not self.board.win:
