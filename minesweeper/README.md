@@ -8,4 +8,4 @@
 1. Change the colors of the numbers according to the original game
 2. Change the way to play again
 3. Create a way to save the game 
-4. Create predefined difficulties (easy, medium, hard, etc)
+4. Create predefined difficulties (easy, medium, hard, etc) and others configurations
