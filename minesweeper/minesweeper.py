@@ -1,5 +1,6 @@
 import random as rd
 import keyboard as kb
+import ctypes as ct
 
 bc = "🞩"  # bomb char
 sc = "▣"  # square char
@@ -393,7 +394,11 @@ class View():
         print("Ganaste! :D")
 
     def play_again(self) -> None:
-        return input("¿Quieres jugar de nuevo? (s/n): ")
+        return #input("¿Quieres jugar de nuevo? (s/n): ")
+    
+    def clear_input_buffer(self) -> None:
+        hConsole = ct.windll.kernel32.GetStdHandle(-10)
+        ct.windll.kernel32.FlushConsoleInputBuffer(hConsole)
 
 
 class Controller():
@@ -415,6 +420,7 @@ class Controller():
             self.handle_input(input)
 
         self.view.clear_screen()
+        self.view.clear_input_buffer()
         self.view.print_board(self.board)
         if self.board.lose:
             self.view.lose()
