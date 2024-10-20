@@ -13,6 +13,7 @@ keys = {
     "up": ["w", "up", "flecha arriba"],
     "down": ["s", "down", "flecha abajo"],
     "shift": ["shift", "mayusculas"],
+    "enter": ["enter", "space"],
 }
 
 # Diccionario de colores básicos
@@ -42,11 +43,16 @@ background_colors = {
     "invert": "\033[7m"
 }
 
-conf = {"width": 10, "height": 10, "bombs": 30}
+
+
+conf = {"width": 10, "height": 10, "bombs": 15}
 rd.seed(15)
 
 def color_str(color, str):
     return color + str + colors["reset"]
+
+
+
 class Cell():
     def __init__(self) -> None:
         self.is_visible = False
@@ -330,7 +336,7 @@ class Board():
         string += up + "\n"
         
         for y in range(0, self.height):
-            left = str(y+1) + " "*(1+len(str(self.height))-len(str(y+1))) + "-"
+            left = str(y+1) + " "*(1+len(str(self.height))-len(str(y+1))) + "- " 
             string += left
             for x in range(0, self.width):
                 if (x,y) == self.current_cell:
@@ -354,8 +360,6 @@ class Board():
 
 
 class View():
-    def __init__(self) -> None:
-        pass
     
     def input(self) -> str:
         return input("Selecciona una celda, con formato [letra][numero] (ej: a3)\nSi marcas/desmarcas una flag, el formato es f [letra][numero] (ej: f a3): ")
@@ -364,20 +368,20 @@ class View():
         print("Error: selecciona una celda válida")
 
     def print_board(self, board: Board) -> None:
-        print(board)
+        print(f"\033[1;1H{board}", end="")
 
     def lose(self) -> None:
         print("Perdiste! :P")
 
     def clear_screen(self) -> None:
-        os.system('cls' if os.name == 'nt' else 'clear')
+        print(f"\033[2J")
 
     def win(self) -> None:
         print("Ganaste! :D")
 
     def play_again(self) -> None:
         return input("¿Quieres jugar de nuevo? (s/n): ")
-
+    
 
 class Controller():
     def __init__(self, board: Board, view: View) -> None:
@@ -389,11 +393,13 @@ class Controller():
 
     def main(self) -> None:
         self.init_board()
+        self.view.clear_screen()
         while not (self.board.lose or self.board.win):
-            self.view.clear_screen()
+            
             self.view.print_board(self.board)
             input = kb.read_hotkey(False)
             self.handle_input(input)
+            
         self.view.clear_screen()
         self.view.print_board(self.board)
         if self.board.lose:
